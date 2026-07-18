@@ -1,0 +1,36 @@
+name: Feature request
+description: Suggest a new behavior, animation, or companion feature.
+title: "[Idea]: "
+labels:
+  - enhancement
+body:
+  - type: markdown
+    attributes:
+      value: Great desktop companions are built from delightfully strange ideas.
+  - type: textarea
+    id: idea
+    attributes:
+      label: What should Nyxbyte do?
+      description: Describe the feature and how someone would interact with it.
+    validations:
+      required: true
+  - type: textarea
+    id: value
+    attributes:
+      label: Why would this be useful or fun?
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Feature area
+      options:
+        - Animation
+        - Desktop behavior
+        - AI or assistant capability
+        - Customization
+        - Accessibility
+        - Developer experience
+        - Other
+    validations:
+      required: true

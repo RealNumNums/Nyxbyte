@@ -1,0 +1,45 @@
+name: Bug report
+description: Tell us what went wrong with Nyxbyte.
+title: "[Bug]: "
+labels:
+  - bug
+body:
+  - type: markdown
+    attributes:
+      value: Thanks for helping Nyxbyte improve.
+  - type: input
+    id: version
+    attributes:
+      label: Nyxbyte version
+      placeholder: v0.1.0
+    validations:
+      required: true
+  - type: input
+    id: windows
+    attributes:
+      label: Windows version
+      placeholder: Windows 11 24H2
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: What happened?
+      description: Include the exact behavior and what you expected instead.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Start Nyxbyte
+        2. Open the tray menu
+        3. ...
+    validations:
+      required: true
+  - type: textarea
+    id: notes
+    attributes:
+      label: Screenshots or extra context
+      description: Add screenshots, logs, or display-scaling details if useful.

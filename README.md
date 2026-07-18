@@ -1,12 +1,28 @@
 # Nyxbyte
 
+<p align="center">
+  <img src="docs/nyxbyte-hero.png" alt="Nyxbyte — a tiny desktop companion" width="100%">
+</p>
+
+<p align="center">
+  <a href="https://github.com/RealNumNums/Nyxbyte/actions/workflows/build.yml"><img src="https://github.com/RealNumNums/Nyxbyte/actions/workflows/build.yml/badge.svg" alt="Windows build"></a>
+  <a href="https://github.com/RealNumNums/Nyxbyte/releases/latest"><img src="https://img.shields.io/github/v/release/RealNumNums/Nyxbyte?style=flat-square&color=00cbea" alt="Latest release"></a>
+  <a href="https://github.com/RealNumNums/Nyxbyte/releases"><img src="https://img.shields.io/github/downloads/RealNumNums/Nyxbyte/total?style=flat-square&color=1687ff" alt="Downloads"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/github/license/RealNumNums/Nyxbyte?style=flat-square&color=31d6c8" alt="MIT License"></a>
+  <a href="https://github.com/RealNumNums/Nyxbyte/stargazers"><img src="https://img.shields.io/github/stars/RealNumNums/Nyxbyte?style=flat-square&color=ffd866" alt="GitHub stars"></a>
+</p>
+
 Nyxbyte is a tiny animated Windows desktop companion written in modern C++.
 He roams over your apps, waves, jumps, focuses, reviews, and generally keeps
 your desktop company without needing an installer or a background service.
 
-[Download the latest Windows release](https://github.com/RealNumNums/Nyxbyte/releases/latest)
-
-![Nyxbyte animation preview](docs/nyxbyte-animations.png)
+<p align="center">
+  <strong><a href="https://github.com/RealNumNums/Nyxbyte/releases/latest">Download Nyxbyte for Windows</a></strong>
+  ·
+  <a href="https://github.com/RealNumNums/Nyxbyte/discussions">Join the community</a>
+  ·
+  <a href="https://github.com/RealNumNums/Nyxbyte/issues/new/choose">Suggest a feature</a>
+</p>
 
 ## Features
 
@@ -17,6 +33,13 @@ your desktop company without needing an installer or a background service.
 - Tray icon with animation and behavior controls
 - Separate `ICompanionBrain` interface for future AI features
 - No telemetry, account, network connection, or installer
+
+<details>
+<summary><strong>See every animation state</strong></summary>
+
+![Nyxbyte animation preview](docs/nyxbyte-animations.png)
+
+</details>
 
 ## Install
 
@@ -74,6 +97,12 @@ app-aware tools without replacing the window and animation system.
 - Optional AI connector behind an explicit permissions layer
 - Speech and customizable personalities
 - More pets, animation packs, and themes
+
+## Help Nyxbyte grow
+
+If Nyxbyte made your desktop a little less lonely, consider giving the
+repository a ⭐. Stars help other desktop-pet fans and C++ developers discover
+the project. Bug reports, animation ideas, and pull requests are welcome too.
 
 Contributions and forks are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md).
 
