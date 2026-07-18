@@ -2,6 +2,16 @@
 
 All notable changes to Nyxbyte are documented here.
 
+## 0.2.0 - 2026-07-18
+
+### Added
+
+- Automatic persistence for scale, position, roaming, always-on-top, and
+  click-through preferences.
+- Readable `%LOCALAPPDATA%\Nyxbyte\config.ini` configuration file.
+- **Open config folder** command in the pet and tray menus.
+- Settings validation, corruption recovery, and automated round-trip tests.
+
 ## 0.1.1 - 2026-07-18
 
 ### Fixed

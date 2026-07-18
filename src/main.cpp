@@ -6,6 +6,7 @@
 
 #include "nyxbyte/brain.hpp"
 #include "nyxbyte/monitor_layout.hpp"
+#include "nyxbyte/settings.hpp"
 #include "resource.h"
 
 #include <algorithm>
@@ -89,6 +90,7 @@ enum MenuCommand : UINT {
     menu_scale_75,
     menu_scale_100,
     menu_scale_125,
+    menu_open_config,
     menu_about,
     menu_exit,
 };
@@ -126,6 +128,13 @@ public:
     }
 
     bool create() {
+        const nyxbyte::Settings saved = nyxbyte::load_settings(settings_path_);
+        scale_percent_ = saved.scale_percent;
+        roaming_enabled_ = saved.roaming_enabled;
+        always_on_top_ = saved.always_on_top;
+        click_through_ = saved.click_through;
+        saved_position_ = saved.position;
+
         Gdiplus::GdiplusStartupInput input;
         if (Gdiplus::GdiplusStartup(&gdiplus_token_, &input, nullptr) != Gdiplus::Ok) {
             MessageBoxW(nullptr, L"Nyxbyte could not start GDI+.", kWindowTitle, MB_ICONERROR);
@@ -163,8 +172,12 @@ public:
 
         SIZE size = scaled_size();
         const RECT work = primary_work_area();
-        const int x = work.right - size.cx - 48;
-        const int y = work.bottom - size.cy - 18;
+        const int x = saved_position_.has_value()
+            ? saved_position_->x
+            : work.right - size.cx - 48;
+        const int y = saved_position_.has_value()
+            ? saved_position_->y
+            : work.bottom - size.cy - 18;
         window_ = CreateWindowExW(
             extended_style(),
             kWindowClass,
@@ -185,6 +198,7 @@ public:
 
         position_x_ = static_cast<double>(x);
         position_y_ = static_cast<double>(y);
+        clamp_to_work_area();
         last_tick_ = monotonic_now();
         frame_started_ = last_tick_;
         brain_.reset(last_tick_);
@@ -196,6 +210,7 @@ public:
         add_tray_icon();
         ShowWindow(window_, SW_SHOWNOACTIVATE);
         render();
+        persist_settings();
         return true;
     }
 
@@ -249,6 +264,7 @@ private:
         case WM_LBUTTONDBLCLK:
             roaming_enabled_ = !roaming_enabled_;
             brain_.reset(monotonic_now());
+            persist_settings();
             show_balloon(
                 roaming_enabled_ ? L"Roaming enabled" : L"Roaming paused");
             return 0;
@@ -282,8 +298,10 @@ private:
         case WM_DISPLAYCHANGE:
         case WM_SETTINGCHANGE:
             clamp_to_work_area();
+            persist_settings();
             return 0;
         case WM_DESTROY:
+            persist_settings();
             remove_tray_icon();
             PostQuitMessage(0);
             return 0;
@@ -593,6 +611,7 @@ private:
             roaming_enabled_ = false;
             start_animation(Animation::idle, false);
             brain_.reset(monotonic_now());
+            persist_settings();
         } else {
             start_animation(Animation::wave, true);
         }
@@ -672,6 +691,7 @@ private:
             L"125%");
         AppendMenuW(menu, MF_POPUP, reinterpret_cast<UINT_PTR>(scale_menu), L"Scale");
         AppendMenuW(menu, MF_SEPARATOR, 0, nullptr);
+        AppendMenuW(menu, MF_STRING, menu_open_config, L"Open config folder");
         AppendMenuW(menu, MF_STRING, menu_about, L"About Nyxbyte");
         AppendMenuW(menu, MF_STRING, menu_exit, L"Exit");
 
@@ -707,6 +727,7 @@ private:
             roam_until_.reset();
             start_animation(Animation::idle, false);
             brain_.reset(monotonic_now());
+            persist_settings();
             break;
         case menu_always_on_top:
             always_on_top_ = !always_on_top_;
@@ -718,6 +739,7 @@ private:
                 0,
                 0,
                 SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
+            persist_settings();
             break;
         case menu_click_through:
             set_click_through(!click_through_);
@@ -731,10 +753,14 @@ private:
         case menu_scale_125:
             set_scale(125);
             break;
+        case menu_open_config:
+            open_config_folder();
+            break;
         case menu_about:
             MessageBoxW(
                 window_,
-                L"Nyxbyte 0.1\n\nA native C++ desktop companion.\n"
+                L"Nyxbyte 0.2.0\n\nA native C++ desktop companion.\n"
+                L"Your preferences are saved automatically.\n"
                 L"Renderer and behavior brain are separated for future AI features.",
                 kWindowTitle,
                 MB_OK | MB_ICONINFORMATION);
@@ -760,6 +786,7 @@ private:
             SWP_NOMOVE | SWP_NOACTIVATE | SWP_NOZORDER);
         clamp_to_work_area();
         render();
+        persist_settings();
     }
 
     void set_click_through(const bool enabled) {
@@ -783,6 +810,32 @@ private:
             click_through_
                 ? L"Click-through enabled. Press Ctrl+Alt+N or use the tray icon to restore."
                 : L"Click-through disabled.");
+        persist_settings();
+    }
+
+    void persist_settings() const {
+        nyxbyte::Settings settings{
+            .scale_percent = scale_percent_,
+            .roaming_enabled = roaming_enabled_,
+            .always_on_top = always_on_top_,
+            .click_through = click_through_,
+            .position = nyxbyte::SavedPosition{
+                static_cast<int>(std::lround(position_x_)),
+                static_cast<int>(std::lround(position_y_)),
+            },
+        };
+        nyxbyte::save_settings(settings_path_, settings);
+    }
+
+    void open_config_folder() {
+        persist_settings();
+        ShellExecuteW(
+            window_,
+            L"open",
+            settings_path_.parent_path().c_str(),
+            nullptr,
+            nullptr,
+            SW_SHOWNORMAL);
     }
 
     void add_tray_icon() {
@@ -832,6 +885,7 @@ private:
     std::unique_ptr<Image> atlas_;
     nyxbyte::AmbientBrain brain_;
     NOTIFYICONDATAW tray_data_{};
+    const std::filesystem::path settings_path_{nyxbyte::default_settings_path()};
 
     Animation animation_{Animation::idle};
     int frame_{};
@@ -844,6 +898,7 @@ private:
     bool hotkey_registered_{};
     bool dragging_{};
     bool moved_during_drag_{};
+    std::optional<nyxbyte::SavedPosition> saved_position_;
 
     double position_x_{};
     double position_y_{};

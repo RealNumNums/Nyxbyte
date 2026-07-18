@@ -29,9 +29,10 @@ your desktop company without needing an installer or a background service.
 - Transparent native Win32 overlay
 - Smooth sprite animation and monitor-aware ambient roaming
 - Drag freely between mixed-size landscape and portrait monitors
-- Drag positioning and three display scales
+- Persistent position and three display scales
 - Always-on-top and click-through modes
 - Tray icon with animation and behavior controls
+- Automatic settings backup in a readable local config file
 - Separate `ICompanionBrain` interface for future AI features
 - No telemetry, account, network connection, or installer
 
@@ -62,6 +63,19 @@ prompt because this hobby release is not code-signed; choose **More info** and
 - Press `Ctrl+Alt+N` to toggle click-through mode.
 - Use the tray menu to exit while click-through is enabled.
 
+## Saved settings
+
+Nyxbyte automatically remembers his scale, last position, roaming preference,
+always-on-top mode, and click-through mode. Settings are stored in:
+
+```text
+%LOCALAPPDATA%\Nyxbyte\config.ini
+```
+
+Choose **Open config folder** from Nyxbyte's right-click or tray menu to find
+the file. Invalid values safely fall back to defaults, and saved positions are
+clamped onto an available monitor if your display layout changes.
+
 ## Build from source
 
 Requirements:
@@ -85,6 +99,7 @@ The executable and its copied assets will be under `build\Release`.
 assets/                 Runtime sprite atlas and application icon
 include/nyxbyte/        Replaceable companion-brain interface
 src/ambient_brain.cpp   Current offline ambient behavior
+src/settings.cpp        Validated local config persistence
 src/main.cpp            Win32 window, rendering, animation, and controls
 ```
 
