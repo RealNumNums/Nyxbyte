@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.24)
 
-project(Nyxbyte VERSION 0.1.0 LANGUAGES CXX RC)
+project(Nyxbyte VERSION 0.1.1 LANGUAGES CXX RC)
 
 add_executable(Nyxbyte WIN32
     src/main.cpp
@@ -35,3 +35,17 @@ add_custom_command(TARGET Nyxbyte POST_BUILD
         "$<TARGET_FILE_DIR:Nyxbyte>/assets/spritesheet.png"
     COMMENT "Copying Nyxbyte sprites"
 )
+
+include(CTest)
+
+if(BUILD_TESTING)
+    add_executable(NyxbyteMonitorTests
+        tests/monitor_layout_tests.cpp
+    )
+    target_compile_features(NyxbyteMonitorTests PRIVATE cxx_std_20)
+    target_include_directories(NyxbyteMonitorTests PRIVATE include)
+    if(MSVC)
+        target_compile_options(NyxbyteMonitorTests PRIVATE /W4 /permissive- /EHsc /utf-8)
+    endif()
+    add_test(NAME monitor-layout COMMAND NyxbyteMonitorTests)
+endif()

@@ -27,7 +27,8 @@ your desktop company without needing an installer or a background service.
 ## Features
 
 - Transparent native Win32 overlay
-- Smooth sprite animation and ambient roaming
+- Smooth sprite animation and monitor-aware ambient roaming
+- Drag freely between mixed-size landscape and portrait monitors
 - Drag positioning and three display scales
 - Always-on-top and click-through modes
 - Tray icon with animation and behavior controls
@@ -44,7 +45,7 @@ your desktop company without needing an installer or a background service.
 ## Install
 
 1. Open the [latest release](https://github.com/RealNumNums/Nyxbyte/releases/latest).
-2. Download `Nyxbyte-v0.1.0-windows-x64.zip`.
+2. Download the `Nyxbyte-v*-windows-x64.zip` file.
 3. Extract the whole ZIP.
 4. Run `Nyxbyte.exe`.
 

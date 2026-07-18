@@ -5,6 +5,7 @@
 #include <gdiplus.h>
 
 #include "nyxbyte/brain.hpp"
+#include "nyxbyte/monitor_layout.hpp"
 #include "resource.h"
 
 #include <algorithm>
@@ -325,6 +326,15 @@ private:
         return primary_work_area();
     }
 
+    RECT work_area_for_point(const POINT point) const {
+        MONITORINFO monitor_info{sizeof(monitor_info)};
+        const HMONITOR monitor = MonitorFromPoint(point, MONITOR_DEFAULTTONEAREST);
+        if (GetMonitorInfoW(monitor, &monitor_info)) {
+            return monitor_info.rcWork;
+        }
+        return primary_work_area();
+    }
+
     void tick() {
         const ClockMs now = monotonic_now();
         const auto elapsed = std::max<ClockMs>(ClockMs{0}, now - last_tick_);
@@ -561,7 +571,7 @@ private:
 
         position_x_ = static_cast<double>(drag_window_origin_.x + dx);
         position_y_ = static_cast<double>(drag_window_origin_.y + dy);
-        clamp_to_work_area();
+        clamp_position_to_work_area(work_area_for_point(cursor));
         SetWindowPos(
             window_,
             nullptr,
@@ -588,20 +598,29 @@ private:
         }
     }
 
+    void clamp_position_to_work_area(const RECT work) {
+        const SIZE size = scaled_size();
+        const auto clamped = nyxbyte::clamp_window_origin(
+            {position_x_, position_y_},
+            {
+                static_cast<double>(size.cx),
+                static_cast<double>(size.cy),
+            },
+            {
+                static_cast<double>(work.left),
+                static_cast<double>(work.top),
+                static_cast<double>(work.right),
+                static_cast<double>(work.bottom),
+            });
+        position_x_ = clamped.x;
+        position_y_ = clamped.y;
+    }
+
     void clamp_to_work_area() {
         if (window_ == nullptr) {
             return;
         }
-        const RECT work = work_area_for_window();
-        const SIZE size = scaled_size();
-        position_x_ = std::clamp(
-            position_x_,
-            static_cast<double>(work.left),
-            static_cast<double>(work.right - size.cx));
-        position_y_ = std::clamp(
-            position_y_,
-            static_cast<double>(work.top),
-            static_cast<double>(work.bottom - size.cy));
+        clamp_position_to_work_area(work_area_for_window());
         SetWindowPos(
             window_,
             nullptr,

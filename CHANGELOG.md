@@ -2,6 +2,20 @@
 
 All notable changes to Nyxbyte are documented here.
 
+## 0.1.1 - 2026-07-18
+
+### Fixed
+
+- Dragging now follows the monitor under the cursor instead of clamping Nyxbyte
+  to the monitor where the drag began.
+- Left-side and stacked monitors with negative desktop coordinates now work.
+- Mixed landscape and portrait monitor layouts keep Nyxbyte inside the target
+  monitor's usable work area.
+
+### Added
+
+- Automated monitor-layout regression tests in local and GitHub Actions builds.
+
 ## 0.1.0 - 2026-07-18
 
 ### Added
