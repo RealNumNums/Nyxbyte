@@ -1,0 +1,4 @@
+#include "resource.h"
+
+IDI_NYXBYTE ICON "../assets/nyxbyte.ico"
+1 RT_MANIFEST "app.manifest"

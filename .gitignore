@@ -1,0 +1,9 @@
+/build/
+/dist/
+/qa/
+/release/
+/.vs/
+/out/
+/assets/source-*
+*.user
+*.suo
